@@ -16,25 +16,17 @@ def canvas():
 	files = json['filename']
 	print(files)
 
-@app.route("/canvas/<str:_filename>", methods = ['GET'])
+@app.route("/canvas/download/<str:_filename>", methods = ['GET'])
 def canvasDown(_filename):
 	r = requests.get(canvasURL+'?'+filename, allow_redirects = True)
 	open(filename, 'wb').write(r.content)
 	return ''
 	
 	
-@app.route("/canvas/<str:_filename>/<str:_file>", methods = ['POST'])
+@app.route("/canvas/upload/<str:_filename>/<str:_file>", methods = ['POST'])
 def canvasUp(_filename, _file):
 	f = request.files[_file]
 	f.save(_filename)
 	return ''
 	
-	
-@app.route("/canvas/<str:_filename1>/<str:_file1>/<str:_filename2>/<str:_file2>")	
-def canvasUp2(_filename1. _filename2, _file1, _file2):
-	f1 = request.files[_file1]
-	f1.save(_filename1)
-	f2 = request.files[_file2]
-	f2.save(_filename2)
-	return ''
 	
