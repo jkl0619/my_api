@@ -1,0 +1,23 @@
+from flask import Flask
+import requests
+
+app = Flask(__name__)
+
+@app.route("/add/<int:v1>/<int:v2>")
+def add(v1,v2):
+	return str(int(v1) + int(v2))
+	
+@app.route("/sub/<int:v1>/<int:v2>")
+def sub(v1,v2):
+	return str(int(v1) - int(v2))
+	
+@app.route("/mul/<int:v1>/<int:v2>")
+def mul(v1,v2):
+	return str(int(v1) * int(v2))
+	
+@app.route("/div/<int:v1>/<int:v2>")
+def div(v1,v2):
+	return str(int(v1) / int(v2))
+	
+if __name__ == "__main__":
+	app.run(host='0.0.0.0', port = 8090, debug=True)	

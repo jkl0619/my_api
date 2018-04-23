@@ -10,6 +10,7 @@ app.config['UPLOAD_FOLDER'] = "/path/to/the/uploads/on/canvas"
 #https://canvas.vt.edu/groups/52695/files is the file
 canvasURL = 'https://canvas.vt.edu/api/v1/groups/52695/files'
 
+
 @app.route("/canvas", methods = ['GET'])
 def canvas():
 	r = requests.get(canvasURL)
