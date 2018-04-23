@@ -25,7 +25,6 @@ if __name__ == '__main__':
                        desc, "ash-2.local.")
 
     zeroconf = Zeroconf()
-    print("Registration of a service, press Ctrl-C to exit...")
     zeroconf.register_service(info)
 
 print("zeroconf register success!")
