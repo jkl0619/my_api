@@ -1,13 +1,34 @@
-from zeroconf import ServiceBrowser, Zeroconf
+from zeroconf import ServiceBrowser, Zeroconf, ServiceInfo
 import os
 from twitter import *
 from flask import Flask, request, render_template, redirect, abort, flash, jsonify
 from clientKeys import *
 from flask_httpauth import HTTPBasicAuth
 import socket
+import logging
+import sys
 
 ownAddress = socket.gethostbyname(socket.gethostname())
 
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+    if len(sys.argv) > 1:
+        assert sys.argv[1:] == ['--debug']
+        logging.getLogger('zeroconf').setLevel(logging.DEBUG)
+
+    desc = {'path': '/~paulsm/'}
+
+    info = ServiceInfo("_http._tcp.local.",
+                       "custom._http._tcp.local.",
+                       socket.inet_aton(ownAddress), 8090, 0, 0,
+                       desc, "ash-2.local.")
+
+    zeroconf = Zeroconf()
+    print("Registration of a service, press Ctrl-C to exit...")
+    zeroconf.register_service(info)
+
+print("zeroconf register success!")
 
 class MyListener(object):
     def remove_service(self, zeroconf, type, name):
