@@ -4,8 +4,10 @@ from twitter import *
 from flask import Flask, request, render_template, redirect, abort, flash, jsonify
 from clientKeys import *
 from flask_httpauth import HTTPBasicAuth
-auth = HTTPBasicAuth()
-address = ""
+import socket
+
+ownAddress = socket.gethostbyname(socket.gethostname())
+
 
 class MyListener(object):
     def remove_service(self, zeroconf, type, name):
@@ -29,24 +31,15 @@ class MyListener(object):
 #    zeroconf.close()
 
 
-#curl -H "Authorization: Bearer <ACCESS-TOKEN>" "https://canvas.instructure.com/api/v1/courses"
-
-# curl "https://canvas.instructure.com/api/v1/courses?access_token=<ACCESS-TOKEN>"
-
-#address = '\xc0\xa8\x01\x8f'
-# they are hex values
-#ipv4_address = ':'.join(str(ord(i)) for i in address)
 
 # coding: utf-8
 
 app = Flask(__name__)   # create our flask app
+auth = HTTPBasicAuth()
 
 # configure Twitter API
 twitter = Twitter(auth=OAuth(access_token, access_token_secret, consumer_key, consumer_secret))
 
-
-# configure Twitter API
-# set consumer token + access token
 users = {
     "admin": "pass",
     "jae": "laroca69"
@@ -100,4 +93,4 @@ def first_Tweet_Friend(username):
 # start the webserver
 if __name__ == "__main__":
     app.debug = True
-    app.run(host='0.0.0.0', port=8090)
+    app.run(host=ownAddress, port=8090)

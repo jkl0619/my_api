@@ -44,13 +44,13 @@ def led_get():
 			# print(str(param))
 	# else:
 		# print("Error: Failed to set values.")
-		
-	
+
+
 @app.route("/led/red/<int:v1>", methods = ['POST'])
 def led(v1):
-	
+
 	print(v1)
-		
+
 
 
 try:
