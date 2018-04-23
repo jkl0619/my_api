@@ -1,6 +1,5 @@
 from zeroconf import ServiceBrowser, Zeroconf
 import os
-import time
 from twitter import *
 from flask import Flask, request, render_template, redirect, abort, flash, jsonify
 from clientKeys import *
@@ -67,14 +66,14 @@ def sendDM(username,message):
     return updateMessage
 
 
-@app.route('/firstTweet', methods=['GET'])
+@app.route('/firstTweetUser', methods=['GET'])
 def first_Tweet():
     x = twitter.statuses.home_timeline()
 
     # The username of the first tweet on your timeline
     return x[0]['user']['screen_name']
 
-@app.route('/firstTweet/friend/<string:username>', methods=['GET'])
+@app.route('/firstTweetUser/friend/<string:username>', methods=['GET'])
 def first_Tweet_Friend(username):
     x = twitter.statuses.user_timeline(screen_name=username)
 
