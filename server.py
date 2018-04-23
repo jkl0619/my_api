@@ -7,7 +7,7 @@ import os
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = "/path/to/the/uploads/on/canvas"
-canvasURL = 'https://www.canvas.com/'
+canvasURL = 'https://canvas.vt.edu/groups/52695/files/'
 
 @app.route("/canvas", methods = ['GET'])
 def canvas():
@@ -18,7 +18,7 @@ def canvas():
 
 @app.route("/canvas/<str:_filename>", methods = ['GET'])
 def canvasDown(_filename):
-	r = requests.get(canvasURL+'/'+filename, allow_redirects = True)
+	r = requests.get(canvasURL+'?'+filename, allow_redirects = True)
 	open(filename, 'wb').write(r.content)
 	return ''
 	
