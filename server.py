@@ -36,7 +36,7 @@ def canvasUp(_filename, _file):
 
 	# Step 1 - tell Canvas you want to upload a file
 	payload = {}
-	payload['name'] = 'test.pdf'
+	payload['name'] = _filename
 	payload['parent_folder_path'] = '/'
 	r = session.post(api_url, data=payload)
 	r.raise_for_status()
