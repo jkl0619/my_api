@@ -1,8 +1,8 @@
 from zeroconf import ServiceBrowser, Zeroconf
-from flask import Flask
-from flask import g, session, request, url_for, flash
-from flask import redirect, render_template
-from flask_oauthlib.client import OAuth
+import os
+import time
+from twitter import *
+from flask import Flask, request, render_template, redirect, abort, flash, jsonify
 
 address = ""
 
@@ -37,95 +37,84 @@ finally:
 
 # coding: utf-8
 
+app = Flask(__name__)  # create our flask app
 
+# configure Twitter API
+twitter = Twitter(
+    auth=OAuth(os.environ.get('OAUTH_TOKEN'), os.environ.get('OAUTH_SECRET'),
+               os.environ.get('CONSUMER_KEY'), os.environ.get('CONSUMER_SECRET'))
 
-app = Flask(__name__)
-app.debug = True
-app.secret_key = 'development'
-
-oauth = OAuth(app)
-
-twitter = oauth.remote_app(
-    'twitter',
-    consumer_key='xBeXxg9lyElUgwZT6AZ0A',
-    consumer_secret='aawnSpNTOVuDCjx7HMh6uSXetjNN8zWLpZwCEU4LBrk',
-    base_url='https://api.twitter.com/1.1/',
-    request_token_url='https://api.twitter.com/oauth/request_token',
-    access_token_url='https://api.twitter.com/oauth/access_token',
-    authorize_url='https://api.twitter.com/oauth/authorize'
 )
 
 
-@twitter.tokengetter
-def get_twitter_token():
-    if 'twitter_oauth' in session:
-        resp = session['twitter_oauth']
-        return resp['oauth_token'], resp['oauth_token_secret']
-
-
-@app.before_request
-def before_request():
-    g.user = None
-    if 'twitter_oauth' in session:
-        g.user = session['twitter_oauth']
-
-
 @app.route('/')
-def index():
-    tweets = None
-    if g.user is not None:
-        resp = twitter.request('statuses/home_timeline.json')
-        if resp.status == 200:
-            tweets = resp.data
-        else:
-            flash('Unable to load tweets from Twitter.')
-    return render_template('index.html', tweets=tweets)
+def main():
+    # fetch 3 tweets from my account
+    myTweets = twitter.statuses.user_timeline(count=10)
+
+    # fetch 3 tweets from ITP_NYU
+    itpTweets = twitter.statuses.user_timeline(screen_name='itp_nyu', count=10)
+
+    # app.logger.debug(itpTweets)
+
+    templateData = {
+        'title': 'My last three tweets',
+        'myTweets': myTweets,
+        'itpTweets': itpTweets
+    }
+
+    return render_template('index.html', **templateData)
 
 
-@app.route('/tweet', methods=['POST'])
-def tweet():
-    if g.user is None:
-        return redirect(url_for('login', next=request.url))
-    status = request.form['tweet']
-    if not status:
-        return redirect(url_for('index'))
-    resp = twitter.post('statuses/update.json', data={
-        'status': status
-    })
+@app.route('/search')
+def search():
+    # get search term from querystring 'q'
+    query = request.args.get('q', '#redburns')
 
-    if resp.status == 403:
-        flash("Error: #%d, %s " % (
-            resp.data.get('errors')[0].get('code'),
-            resp.data.get('errors')[0].get('message'))
-        )
-    elif resp.status == 401:
-        flash('Authorization error with Twitter.')
+    # search with query term and return 10
+    results = twitter.search.tweets(q=query, count=50)
+
+    # return jsonify(results)
+    # app.logger.debug(results)
+
+    templateData = {
+        'query': query,
+        'tweets': results.get('statuses')
+    }
+
+    return render_template('search.html', **templateData)
+
+
+@app.route('/post', methods=['GET', 'POST'])
+def post_to_twitter():
+    if request.method == 'POST':
+        result = twitter.statuses.update(status=request.form.get('status'))
+
+        app.logger.debug(result)
+
+        # redirect to new twitter status post
+        return redirect('http://www.twitter.com/%s/status/%s' % (result['user']['screen_name'], result.get('id')))
+
     else:
-        flash('Successfully tweeted your tweet (ID: #%s)' % resp.data['id'])
-    return redirect(url_for('index'))
+        return render_template('post_to_twitter.html')
 
 
-@app.route('/login')
-def login():
-    callback_url = url_for('oauthorized', next=request.args.get('next'))
-    return twitter.authorize(callback=callback_url or request.referrer or None)
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('404.html'), 404
 
 
-@app.route('/logout')
-def logout():
-    session.pop('twitter_oauth', None)
-    return redirect(url_for('index'))
+# This is a jinja custom filter
+@app.template_filter('strftime')
+def _jinja2_filter_datetime(date, fmt=None):
+    pyDate = time.strptime(date, '%a %b %d %H:%M:%S +0000 %Y')  # convert twitter date string into python date/time
+    return time.strftime('%Y-%m-%d %H:%M:%S', pyDate)  # return the formatted date.
 
 
-@app.route('/oauthorized')
-def oauthorized():
-    resp = twitter.authorized_response()
-    if resp is None:
-        flash('You denied the request to sign in.')
-    else:
-        session['twitter_oauth'] = resp
-    return redirect(url_for('index'))
+# --------- Server On ----------
+# start the webserver
+if __name__ == "__main__":
+    app.debug = True
 
-
-if __name__ == '__main__':
-    app.run()
+    port = int(os.environ.get('PORT', 5000))  # locally PORT 5000, Heroku will assign its own port
+    app.run(host='0.0.0.0', port=port)
