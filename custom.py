@@ -3,7 +3,8 @@ import os
 from twitter import *
 from flask import Flask, request, render_template, redirect, abort, flash, jsonify
 from clientKeys import *
-
+from flask_httpauth import HTTPBasicAuth
+auth = HTTPBasicAuth()
 address = ""
 
 class MyListener(object):
@@ -15,17 +16,18 @@ class MyListener(object):
         # print name, info.get_name(), info.server,
         print (name)
         print (info)
-        address = info.server
+        print (info.server)
 
-print(address)
 
 #zeroconf = Zeroconf()
 #listener = MyListener()
 #browser = ServiceBrowser(zeroconf, "_http._tcp.local.", listener)
+
 #try:
 #    input("Press enter to exit...\n\n")
 #finally:
 #    zeroconf.close()
+
 
 #curl -H "Authorization: Bearer <ACCESS-TOKEN>" "https://canvas.instructure.com/api/v1/courses"
 
@@ -45,11 +47,21 @@ twitter = Twitter(auth=OAuth(access_token, access_token_secret, consumer_key, co
 
 # configure Twitter API
 # set consumer token + access token
+users = {
+    "admin": "pass",
+    "jae": "laroca69"
+}
 
+@auth.get_password
+def get_pw(username):
+    if username in users:
+        return users.get(username)
+    return None
 
 #Use %20 for space in Curl, especially for messages
 #updates the status with the specified message
 @app.route('/status/<string:message>', methods = ['POST'])
+@auth.login_required
 def statusUpdate(message):
     twitter.statuses.update(status=message)
     updateMessage= "Updated the status saying: " + message
@@ -57,6 +69,7 @@ def statusUpdate(message):
 
 #Sends a message to the user specified
 @app.route('/dm/<string:username>/<string:message>', methods = ['POST'])
+@auth.login_required
 def sendDM(username,message):
     twitter.direct_messages.new(
         user=username,
@@ -66,14 +79,16 @@ def sendDM(username,message):
     return updateMessage
 
 
-@app.route('/firstTweetUser', methods=['GET'])
+@app.route('/firsttweetuser', methods=['GET'])
+@auth.login_required
 def first_Tweet():
     x = twitter.statuses.home_timeline()
 
     # The username of the first tweet on your timeline
     return x[0]['user']['screen_name']
 
-@app.route('/firstTweetUser/friend/<string:username>', methods=['GET'])
+@app.route('/firsttweetuser/friend/<string:username>', methods=['GET'])
+@auth.login_required
 def first_Tweet_Friend(username):
     x = twitter.statuses.user_timeline(screen_name=username)
 

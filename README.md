@@ -1,10 +1,14 @@
 "# my_api" 
 
+MAKE SURE OUR ENDPOINTS ARE ALL LOWERCASE
+
+
 ****************************
   CONFIGURATIONS TO BE MADE
 ****************************
 NEEDS TO HAVE THE FOLLOWING:
     pip3 install twitter on custom.py
+    pip3 install flask_httpauth on all
 
 
 ****************************
