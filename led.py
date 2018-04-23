@@ -29,89 +29,78 @@ led_data ={
     'rate':0.0,
     'state':0
 }
- 
-@app.route("/led", methods =['GET'])
-def led_get():
-	retVal = json.dumps(led_data)
-
-# @app.route("/led/<path:varargs>", methods = ['POST'])
-# def led(varargs = None):
-	
-	# varargs = varargs.split("/")
-	
-	# if varargs.length()%2 == 0:
-		# for param in range(0, varargs.length(), 2):
-			# print(str(param))
-	# else:
-		# print("Error: Failed to set values.")
 
 
+@app.route("/led", methods = ['POST', 'GET'])
+def led():
+    if request.method == 'POST':
 
+        dcr = 0.0
+        dcg = 0.0
+        dcb = 0.0
+        
+        try:
+            led_data['red'] = float(request.form['red'])
+        except:
+            print("No new red value given. Previous one is still in use")
+        try:
+            led_data['green'] = float(request.form['green'])
+        except:
+            print("No new green value given. Previous one is still in use")
+        try:
+            led_data['blue'] = float(request.form['blue'])
+        except:
+            print("No new blue value given. Previous one is still in use")
+        try:
+            led_data['rate'] = float(request.form['rate'])
+        except:
+            print("No new rate value given. Previous one is still in use")
+        try:
+            led_data['state'] = int(request.form['state'])
+        except:
+            print("No new state value given. Previous one is still in use")
 
-
-@app.route("/led/<path:varargs>", methods = ['POST'])
-def led(varargs=None):
-
-    listarg = varargs.split("/")
-    count = 0        
-    if len(varargs)%2 == 1:
-        for count in range(len(listarg)):
-            if listarg[count] == 'red':
-                led_data['red'] = float(listarg[count+1])
-            if listarg[count] == 'green':
-                led_data['green'] = float(listarg[count+1])
-            if listarg[count] == 'blue':
-                led_data['blue'] = float(listarg[count+1])
-            if listarg[count] == 'rate':
-                led_data['rate'] = float(listarg[count+1])
-            if listarg[count] == 'state':
-                led_data['state'] = int(listarg[count+1])
-        successstr = "Success! New data values set \n"
+        try:
+            if led_data['state'] == 1:
+                while dcr < led_data['red']+1:
+                    #r.ChangeDutyCycle(dc)
+                    print("Redup")
+                    dcr = dcr + 1.0;
+                    time.sleep(5)
+                while dcr > -1:
+                    dcr = dcr - 1.0
+                    print("Reddown")
+                    time.sleep(led_data['rate'])
+                    
+                while dcg < led_data['green']+1:
+                    #r.ChangeDutyCycle(dc)
+                    print(str(dcg))
+                    dcg = dcg + 1.0;
+                    time.sleep(led_data['rate'])
+                while dcg > -1:
+                    dcg = dcg - 1.0
+                    print(str(dcg))
+                    time.sleep(led_data['rate'])
+                    
+                while dcb < led_data['blue']+1:
+                    #r.ChangeDutyCycle(dc)
+                    print(str(dcb))
+                    dcb = dcb + 1.0;
+                    time.sleep(led_data['rate'])
+                while dcb > -1:
+                    dcb = dcb - 1.0
+                    print(str(dcb))
+                    time.sleep(led_data['rate'])
+        except KeyboardInterrupt:
+            pass
+        return json.dumps(led_data) + "\n" + "Data save successful" + "\n"
+                        
+    elif request.method == 'GET':
+        retVal = json.dumps(led_data)
+        return retVal + "\n"
     else:
-        return "Failure to set new data values."
-    
-    return json.dumps(led_data) +"\n" + json.dumps(listarg) + "\n"
-        #eturn successstr
-#    else:
-#        errorstr = "Error: Failed to set values. \n"
-#        return errorstr
-		
-try:
-    while led_data['state'] == 1:
-        print("poop")
-        for dcr in range(0, led_data['red']+1, 1):
-            #r.ChangeDutyCycle(dc)
-            print(str(dcr))
-            time.sleep(rate)
-                
-        for dcr in range(led_data['red'], -1, -1):
-        #           r.ChangeDutyCycle(dc)
-            print(str(dcr))
-            time.sleep(rate)
-
-                
-        for dcg in range(0, led_data['green']+1, 1):
-        #            r.ChangeDutyCycle(dc)
-            print(str(dcg))
-            time.sleep(rate)
-                
-        for dcg in range(led_data['green'], -1, -1):
-        #           r.ChangeDutyCycle(dc)
-            print(str(dcg))
-            time.sleep(rate)
-                
-        for dcb in range(0, led_data['blue']+1, 1):
-        #            r.ChangeDutyCycle(dc)
-            print(str(dcb))
-            time.sleep(rate)
-                
-        for dcb in range(led_data['blue'], -1, -1):
-        #           r.ChangeDutyCycle(dc)
-            print(str(dcb))
-            time.sleep(rate)
-	
-except KeyboardInterrupt:
-	pass
+        retVal = "Action could not be completed \n"
+        return retVal
 
 #r.stop()
 #g.stop()
