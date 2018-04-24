@@ -1,6 +1,7 @@
 import os
-import socket
 import optparse
+import requests
+from requests.auth import HTTPBasicAuth
 
 #THE EXAMPLE MUST BE INSTANTIATED WITH THE APPROPRIATE IP ADDRESS AND THE PORT OF THE SERVER
 # -s ip -p port
@@ -14,21 +15,37 @@ parser.add_option('-p', dest='port', help='The port to connect to')
 host = options.host
 port = options.port
 
-ownAddress = host+ ":" +port
+ownAddress = "http://" + host+ ":" +port
 
-#THIS ONE ACCESSES THE FIRST POST METHOD AT ENDPOINT /status/<string:message>
-address = ownAddress+"/status/wewlad%20We%20boutta%20Pass%20This%20Class -u admin:pass"
-os.system("curl -X POST " + address)
+#THIS ONE ACCESSES THE FIRST POST METHOD AT ENDPOINT /status
+address = ownAddress+"/status"
+messagePayload = { 'message' : "Your message Goes hesaeasd"}
+r = requests.post(address, data=messagePayload, auth=HTTPBasicAuth('admin', 'pass'))
+print(r.headers)
+print(r.content)
+print('\n')
 
-#THIS ONE ACCESSES THE SECOND POST METHOD AT ENDPOINT /dm/<string:username>/<string:message>
-address = ownAddress+"/dm/jae06191/hello%20buddy -u admin:pass"
-os.system("curl -X POST " + address)
+#THIS ONE ACCESSES THE SECOND POST METHOD AT ENDPOINT /dm
+address = ownAddress+"/dm"
+messagePayload = { 'message' : "Your message Goes hesaeasd", 'username' : 'jae06191'}
+r = requests.post(address, data=messagePayload, auth=HTTPBasicAuth('admin', 'pass'))
+print(r.headers)
+print(r.content)
+print('\n')
 
 #THIS ONE ACCESSES THE FIRST GET METHOD AT ENDPOINT /firsttweetuser
-address = ownAddress+"/firsttweetuser -u admin:pass"
-os.system("curl -X GET " + address)
+address = ownAddress+"/firsttweetuser"
+r = requests.get(address, auth=HTTPBasicAuth('admin', 'pass'))
+print(r.headers)
+print(r.content)
+print('\n')
 
-#THIS ONE ACCESSES THE SECOND GET METHOD AT ENDPOINT /firsttweetuser/friend/<string:username>
-address = ownAddress+"/firsttweetuser/friend/jae06191 -u admin:pass"
-os.system("curl -X GET " + address)
+#THIS ONE ACCESSES THE SECOND GET METHOD AT ENDPOINT /firsttweetuser/friend
+address = ownAddress+"/firsttweetuser/friend"
+parameters = {'username':'jae06191'}
+r = requests.get(address, params=parameters, auth=HTTPBasicAuth('admin', 'pass'))
+print(r.headers)
+print(r.content)
+print('\n')
+
 
