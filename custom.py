@@ -34,7 +34,6 @@ if __name__ == '__main__':
 print("zeroconf register success!")
 
 app = Flask(__name__)   # create our flask app
-auth = HTTPBasicAuth()
 
 # configure Twitter API
 twitter = Twitter(auth=OAuth(access_token, access_token_secret, consumer_key, consumer_secret))
