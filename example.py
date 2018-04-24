@@ -19,7 +19,7 @@ ownAddress = "http://" + host+ ":" +port
 
 #THIS ONE ACCESSES THE FIRST POST METHOD AT ENDPOINT /status
 address = ownAddress+"/status"
-messagePayload = { 'message' : "hehe xd"}
+messagePayload = { 'message' : "Hello Kelvin. Your message goes here."}
 r = requests.post(address, data=messagePayload, auth=HTTPBasicAuth('admin', 'pass'))
 print(r.headers)
 print(r.content)
@@ -27,7 +27,7 @@ print('\n')
 
 #THIS ONE ACCESSES THE SECOND POST METHOD AT ENDPOINT /dm
 address = ownAddress+"/dm"
-messagePayload = { 'message' : "hehehXDDD", 'username' : 'jae06191'}
+messagePayload = { 'message' : "Please give us good grades!", 'username' : 'jae06191'}
 r = requests.post(address, data=messagePayload, auth=HTTPBasicAuth('admin', 'pass'))
 print(r.headers)
 print(r.content)
