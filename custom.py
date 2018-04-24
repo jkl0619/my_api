@@ -71,7 +71,7 @@ def first_Tweet():
 
 @app.route('/firsttweetuser/friend', methods=['GET'])
 def first_Tweet_Friend():
-    username = request.form['username']
+    username = request.args.get('username')
     x = twitter.statuses.user_timeline(screen_name=username)
 
     # The username of the first tweet on their timeline
