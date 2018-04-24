@@ -19,7 +19,7 @@ ownAddress = "http://" + host+ ":" +port
 
 #THIS ONE ACCESSES THE FIRST POST METHOD AT ENDPOINT /status
 address = ownAddress+"/status"
-messagePayload = { 'message' : "Your message Goes hesaeasd"}
+messagePayload = { 'message' : "Your message Goes hesaeasdsxdd"}
 r = requests.post(address, data=messagePayload, auth=HTTPBasicAuth('admin', 'pass'))
 print(r.headers)
 print(r.content)
@@ -27,7 +27,7 @@ print('\n')
 
 #THIS ONE ACCESSES THE SECOND POST METHOD AT ENDPOINT /dm
 address = ownAddress+"/dm"
-messagePayload = { 'message' : "Your message Goes hesaeasd", 'username' : 'jae06191'}
+messagePayload = { 'message' : "Your message Goes hesaeasddd", 'username' : 'jae06191'}
 r = requests.post(address, data=messagePayload, auth=HTTPBasicAuth('admin', 'pass'))
 print(r.headers)
 print(r.content)
@@ -42,8 +42,8 @@ print('\n')
 
 #THIS ONE ACCESSES THE SECOND GET METHOD AT ENDPOINT /firsttweetuser/friend
 address = ownAddress+"/firsttweetuser/friend"
-parameters = {'username':'jae06191'}
-r = requests.get(address, params=parameters, auth=HTTPBasicAuth('admin', 'pass'))
+keysyo = {'username':'jae06191'}
+r = requests.get(address, params=keysyo, auth=HTTPBasicAuth('admin', 'pass'))
 print(r.headers)
 print(r.content)
 print('\n')
