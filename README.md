@@ -89,15 +89,19 @@ For more information, please take a look at the custom.pdf for the specific docu
        Workload Share
 ****************************
 
-Chris Miller -
+Chris Miller - millerc3@vt.edu
 
     server.py
 
     mongodb_setup.py
 
-Hao Nguyen -
+    canvas_token.py
+
+Hao Nguyen - h90n@vt.edu
 
     led.py
+
+    led_pin.py
 
 
 Jae Lee - jae0619@vt.edu:
