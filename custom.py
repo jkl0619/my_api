@@ -2,7 +2,7 @@ from zeroconf import ServiceBrowser, Zeroconf, ServiceInfo
 import os
 from twitter import *
 from flask import Flask, request, render_template, redirect, abort, flash, jsonify
-from clientKeys import *
+from client_keys_twitter import *
 from flask_httpauth import HTTPBasicAuth
 import socket
 import logging
@@ -50,7 +50,7 @@ def statusUpdate():
     return updateMessage
 
 #Sends a message to the user specified
-@app.route('/dm>', methods = ['POST'])
+@app.route('/dm', methods = ['POST'])
 def sendDM():
     username = request.form['username']
     message = request.form['message']
