@@ -1,4 +1,4 @@
-import led_pins
+from led_pins import *
 import json
 import sys
 import time
@@ -12,17 +12,18 @@ import os
 
 app = Flask(__name__)
 
-GPIO.setmode(led_pins.led_pins['mode'])
+GPIO.setmode(led_pins['mode'])
 
 #Setting each pin as an output and making it low 
-GPIO.setup(led_pins.led_pins['red'], GPIO.OUT)
-GPIO.setup(led_pins.led_pins['green'], GPIO.OUT)
-GPIO.setup(led_pins.led_pins['blue'], GPIO.OUT)
+GPIO.setup(led_pins['red'], GPIO.OUT)
+GPIO.setup(led_pins['green'], GPIO.OUT)
+GPIO.setup(led_pins['blue'], GPIO.OUT)
 
+#GPIO.output(led_pins['red'], GPIO.HIGH)
 	
-r = GPIO.PWM(led_pins.led_pins['red'], 50)
-g = GPIO.PWM(led_pins.led_pins['green'], 50) 
-b = GPIO.PWM(led_pins.led_pins['blue'], 50)
+r = GPIO.PWM(led_pins['red'], 50)
+g = GPIO.PWM(led_pins['green'], 50) 
+b = GPIO.PWM(led_pins['blue'], 50)
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -65,7 +66,6 @@ b.start(0)
 @app.route("/led", methods = ['POST', 'GET'])
 def led():
     if request.method == 'POST':
-
         dcr = 0.0
         dcg = 0.0
         dcb = 0.0
@@ -100,50 +100,38 @@ def led():
             led_data['state'] = int(request.form['state'])
         except:
             print("No new state value given. Previous one is still in use")
-        print(str(redBool))
-        print(str(greenBool))
-        print(str(blueBool))
+
         try:
             if led_data['state'] == 1:
                 if redBool == 1:
                     while dcr < led_data['red']+1:
                         r.ChangeDutyCycle(dcr)
-                        print(str(dcr))
-                        print(str(led_data['red']))
-                        print("Redup")
                         dcr = dcr + 1.0;
                         time.sleep(led_data['rate'])
                 else:
                     while dcr > -1:
-                        print(str(redBool))
                         r.ChangeDutyCycle(dcr)
                         dcr = dcr - 1.0
-                        print(str(dcr))
-                        print("Reddown")
                         time.sleep(led_data['rate'])
                 if greenBool == 1:    
                     while dcg < led_data['green']+1:
                         g.ChangeDutyCycle(dcg)
-                        print(str(dcg))
                         dcg = dcg + 1.0;
                         time.sleep(led_data['rate'])
                 else:
                     while dcg > -1:
                         g.ChangeDutyCycle(dcg)
                         dcg = dcg - 1.0
-                        print(str(dcg))
                         time.sleep(led_data['rate'])
                 if blueBool == 1:        
                     while dcb < led_data['blue']+1:
                         b.ChangeDutyCycle(dcb)
-                        print(str(dcb))
                         dcb = dcb + 1.0;
                         time.sleep(led_data['rate'])
                 else:   
                     while dcb > -1:
                         b.ChangeDutyCycle(dcb)
                         dcb = dcb - 1.0
-                        print(str(dcb))
                         time.sleep(led_data['rate'])
         except KeyboardInterrupt:
             pass
