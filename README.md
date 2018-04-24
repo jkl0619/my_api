@@ -28,34 +28,59 @@ The custom.py also utilizes the client_keys_twitter.py file in order to obtain t
 The custom.py can perform 2 different GET methods and 2 different POST methods
 
 @app.route('/status', methods = ['POST'])
+
 endpoint: /status
+
 parameter: message
+
 parameter type: string
+
 method = post
+
 Updates the status of the user with the specified message.
+
 CANNOT HAVE DUPLICATE STATUS. WILL RETURN AN ERROR IF TRYING TO RETURN A DUPLICATE ERROR MESSAGE
 
+
 @app.route('/dm', methods = ['POST'])
+
 endpoint: /dm
+
 parameter: username, message
+
 parameter type: string, string
+
 method = post
+
 Sends a direct message from the default user specified with the token, to the specified user, with the contents being the message
-Use %20 instead of space for the message argument.
+
+THE USER MUST BE A FOLLOWER AND SHOULD ALSO BE FOLLOWING
 
 @app.route('/firstTweetUser', methods=['GET'])
+
 endpoint: /firstTweetUser
+
 parameter: N/A
+
 parameter type: N/A
+
 method = GET
+
 Returns the user of the first tweet on your timeline.
 
+
 @app.route('/firstTweetUser/friend', methods=['GET'])
+
 endpoint: /firstTweetUser/friend
+
 parameter: username
+
 parameter type: string
+
 method = GET
+
 Returns the user of the first tweet on the specified users timeline.
+
 Both the token user and the specified user should be followers of each other.
 
 For more information, please take a look at the custom.pdf for the specific documentation
