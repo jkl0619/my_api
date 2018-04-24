@@ -47,7 +47,7 @@ def statusUpdate():
     f = request.form['message']
     twitter.statuses.update(status=f)
     updateMessage = "Updated the status saying: " + f
-    return updateMessage
+    return updateMessage + '\n'
 
 #Sends a message to the user specified
 @app.route('/dm', methods = ['POST'])
@@ -58,8 +58,8 @@ def sendDM():
         user=username,
         text=message)
     updateMessage = "Sent the DM to " + username
-    updateMessage = updateMessage + "with the message: " + message
-    return updateMessage
+    updateMessage = updateMessage + " with the message: " + message
+    return updateMessage + '\n'
 
 
 @app.route('/firsttweetuser', methods=['GET'])
@@ -67,7 +67,7 @@ def first_Tweet():
     x = twitter.statuses.home_timeline()
 
     # The username of the first tweet on your timeline
-    return x[0]['user']['screen_name']
+    return x[0]['user']['screen_name'] + '\n'
 
 @app.route('/firsttweetuser/friend', methods=['GET'])
 def first_Tweet_Friend():
@@ -75,7 +75,7 @@ def first_Tweet_Friend():
     x = twitter.statuses.user_timeline(screen_name=username)
 
     # The username of the first tweet on their timeline
-    return x[0]['user']['screen_name']
+    return x[0]['user']['screen_name'] + '\n'
 
 
 # --------- Server On ----------
